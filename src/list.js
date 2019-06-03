@@ -1,22 +1,4 @@
 import React from "react";
-import Container from "@material-ui/core/Container";
-import { withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import LikeIcon from "@material-ui/icons/FavoriteBorderOutlined";
-import LikedIcon from "@material-ui/icons/Favorite";
-import HighlightIcon from "@material-ui/icons/HighlightOutlined";
-import HighlightedIcon from "@material-ui/icons/Highlight";
-import MakeIcon from "@material-ui/icons/BrushOutlined";
-import MadeIcon from "@material-ui/icons/Brush";
 
 import axios from "axios";
 
@@ -25,7 +7,7 @@ const ENUM_COMPLETE = "COMPLETE";
 const ENUM_ERROR = "ERROR";
 
 const Header = () => (
-  <Typography
+  <div
     variant="h3"
     component="h3"
     gutterBottom
@@ -33,29 +15,20 @@ const Header = () => (
     display="block"
   >
     Discover your next project to hack on this weekend
-  </Typography>
+  </div>
 );
 
 const CircularLoader = ({ styles }) => (
-  <Grid
-    container
-    direction="column"
-    justify="center"
-    alignItems="center"
-    classes={{ root: styles.isLoading }}
-  >
-    <CircularProgress color="secondary" />
-  </Grid>
+  <>LOADING</>
 );
 
 const IdeaCards = ({ ideas, styles }) => (
-  <Grid
+  <div
     container
     spacing={4}
     direction="column"
     justify="center"
     alignItems="center"
-    classes={{ root: styles.gridCard }}
   >
     {ideas.map(idea => (
       <Grid
@@ -64,34 +37,56 @@ const IdeaCards = ({ ideas, styles }) => (
         sm={8}
         classes={{ "grid-xs-12": styles.ideaCardMobile }}
       >
-        <Card>
-          <CardHeader title={idea.name} subheader={`Submitted by Zubuhba`} />
+        <div>
+          <CardHeader
+            title={idea.name}
+            subheader={`By ${idea.publisher}`}
+            action={
+              <Typography variant="body2" color="textSecondary" component="p">
+                {idea.created_at}
+              </Typography>
+            }
+          />
           <CardContent>
             <Typography variant="body2" color="textSecondary" component="p">
               {idea.description}
             </Typography>
           </CardContent>
           <CardActions>
-            <IconButton
-              aria-label="Like the idea"
-              classes={{ root: styles.cardActionButtons }}
+            <Tooltip
+              TransitionComponent={Zoom}
+              title={`Idea liked by ${idea.gazers} people`}
             >
-              <LikeIcon />
-            </IconButton>
-            <Typography variant="body2" color="textSecondary" component="p" classes={{root : styles.cardActionStats}}>
-              12
+              <IconButton
+                aria-label="Like the idea"
+                classes={{ root: styles.cardActionButtons }}
+              >
+                <LikeIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+              classes={{ root: styles.cardActionStats }}
+            >
+              {idea.gazers}
             </Typography>
-            <IconButton aria-label="Will make the idea">
-              <HighlightIcon />
-            </IconButton>
-            <Typography variant="body2" color="textSecondary" component="p" classes={{root : styles.cardActionStats}}>
-              120
-            </Typography>
-            <IconButton aria-label="Made the project">
-              <MadeIcon />
-            </IconButton>
-            <Typography variant="body2" color="textSecondary" component="p" classes={{root : styles.cardActionStats}}>
-              20
+            <Tooltip
+              TransitionComponent={Zoom}
+              title={`Idea implemented by ${idea.makers} people`}
+            >
+              <IconButton aria-label="Made the project">
+                <MadeIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+              classes={{ root: styles.cardActionStats }}
+            >
+              {idea.makers}
             </Typography>
           </CardActions>
         </Card>
@@ -139,14 +134,14 @@ const styles = theme => ({
     width: "100%"
   },
   cardAction: {
-    paddingRight : "2rem",
-    paddingLeft : "2rem"
+    paddingRight: "2rem",
+    paddingLeft: "2rem"
   },
   cardActionButtons: {
     marginLeft: "auto"
   },
   cardActionStats: {
-    marginLeft : "-0.2rem",
+    marginLeft: "-0.2rem",
     marginRight: "0.5rem"
   }
 });
@@ -165,7 +160,7 @@ class List extends React.Component {
       console.log(response);
       if (response.status && response.status === 200) {
         this.setState({
-          ideas: response.data,
+          ideas: response.data.sort((a, b) => b.created_at - a.created_at),
           networkState: ENUM_COMPLETE
         });
       }
