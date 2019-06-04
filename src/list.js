@@ -1,150 +1,64 @@
 import React from "react";
-
 import axios from "axios";
 
 const ENUM_LOADING = "LOADING";
 const ENUM_COMPLETE = "COMPLETE";
 const ENUM_ERROR = "ERROR";
 
-const Header = () => (
-  <div
-    variant="h3"
-    component="h3"
-    gutterBottom
-    color="primary"
-    display="block"
-  >
-    Discover your next project to hack on this weekend
+const CircularLoader = () => (
+  <div className="text-center">
+    <div class="lds-facebook">
+      <div />
+      <div />
+    </div>
+    <h2 className="margin-top-none">loading ideas</h2>
   </div>
 );
 
-const CircularLoader = ({ styles }) => (
-  <>LOADING</>
-);
-
-const IdeaCards = ({ ideas, styles }) => (
-  <div
-    container
-    spacing={4}
-    direction="column"
-    justify="center"
-    alignItems="center"
-  >
+const IdeaCards = ({ ideas }) => (
+  <div className="row flex-center">
     {ideas.map(idea => (
-      <Grid
-        item
-        xs={12}
-        sm={8}
-        classes={{ "grid-xs-12": styles.ideaCardMobile }}
-      >
-        <div>
-          <CardHeader
-            title={idea.name}
-            subheader={`By ${idea.publisher}`}
-            action={
-              <Typography variant="body2" color="textSecondary" component="p">
-                {idea.created_at}
-              </Typography>
-            }
-          />
-          <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {idea.description}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Tooltip
-              TransitionComponent={Zoom}
-              title={`Idea liked by ${idea.gazers} people`}
-            >
-              <IconButton
-                aria-label="Like the idea"
-                classes={{ root: styles.cardActionButtons }}
-              >
-                <LikeIcon />
-              </IconButton>
-            </Tooltip>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              component="p"
-              classes={{ root: styles.cardActionStats }}
-            >
-              {idea.gazers}
-            </Typography>
-            <Tooltip
-              TransitionComponent={Zoom}
-              title={`Idea implemented by ${idea.makers} people`}
-            >
-              <IconButton aria-label="Made the project">
-                <MadeIcon />
-              </IconButton>
-            </Tooltip>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              component="p"
-              classes={{ root: styles.cardActionStats }}
-            >
-              {idea.makers}
-            </Typography>
-          </CardActions>
-        </Card>
-      </Grid>
+      <div className="sm-12 md-8 lg-8 col">
+        <div className="card margin-bottom-large">
+          <div className="card-body">
+            <h4 class="card-title">{idea.name}</h4>
+            <p className="card-text">{idea.description}</p>
+            <h6 class="card-text">- {idea.publisher}</h6>
+            <div className="margin" />
+            <div className="row flex-edges margin-bottom-none">
+              <div className="col padding-left-none padding-bottom-none">
+                <p className="margin-top-large text-muted">
+                  {idea.makers === 1
+                    ? `${idea.makers} person liked it.`
+                    : idea.makers === 0
+                    ? `People are yet to like it.`
+                    : `${idea.makers} people loved it.`}
+                </p>
+                <p className="text-muted">
+                  {idea.makers === 1
+                    ? `${idea.makers} person made it.`
+                    : idea.makers === 0
+                    ? `No one made it yet.`
+                    : `${idea.makers} people made it.`}
+                </p>
+              </div>
+              <div className="col padding-bottom-none">
+                <button className="margin-right-large">Like it</button>
+                <button>I made it</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     ))}
-  </Grid>
+  </div>
 );
 
-const FloatingActionButton = ({ styles }) => (
-  <Fab
-    disableRipple
-    disableFocusRipple
-    color="secondary"
-    variant="extended"
-    classes={{ root: styles.fab }}
-  >
-    <AddIcon classes={{ root: styles.addIcon }} />
-    Add idea
-  </Fab>
+const FloatingActionButton = () => (
+  <div className="fab">
+    <button className="paper-btn margin">+</button>
+  </div>
 );
-
-const styles = theme => ({
-  container: {
-    minHeight: "100vh",
-    paddingTop: "4rem",
-    paddingBottom: 2
-  },
-  fab: {
-    margin: theme.spacing(7),
-    color: theme.palette.primary.contrastText,
-    position: "fixed",
-    right: 0,
-    bottom: 0
-  },
-  addIcon: {
-    marginRight: theme.spacing(1)
-  },
-  isLoading: {
-    minHeight: "50vh"
-  },
-  gridCard: {
-    marginTop: "6rem"
-  },
-  ideaCardMobile: {
-    width: "100%"
-  },
-  cardAction: {
-    paddingRight: "2rem",
-    paddingLeft: "2rem"
-  },
-  cardActionButtons: {
-    marginLeft: "auto"
-  },
-  cardActionStats: {
-    marginLeft: "-0.2rem",
-    marginRight: "0.5rem"
-  }
-});
 
 class List extends React.Component {
   state = {
@@ -174,16 +88,17 @@ class List extends React.Component {
     const { ideas, networkState } = this.state;
 
     return (
-      <Container classes={{ root: styles.container }}>
-        <Header />
-        {networkState === ENUM_LOADING && <CircularLoader styles={styles} />}
+      <>
+        {networkState === ENUM_LOADING && <CircularLoader />}
         {networkState === ENUM_COMPLETE && (
           <IdeaCards ideas={ideas} styles={styles} />
         )}
-        <FloatingActionButton styles={styles} />
-      </Container>
+        <aside>
+          <FloatingActionButton styles={styles} />
+        </aside>
+      </>
     );
   }
 }
 
-export default withStyles(styles)(List);
+export default List;

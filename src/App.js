@@ -1,14 +1,19 @@
 import React from "react";
 
 import Nav from "./nav";
-// import List from "./list";
+import Search from "./search";
+import List from "./list";
 
 export default () => (
   <>
     <header>
       <Nav />
     </header>
-    <section>{/* <List /> */}</section>
-    <footer>Made with Love</footer>
+    <section>
+      <Search />
+    </section>
+    <main>
+      <List />
+    </main>
   </>
 );
