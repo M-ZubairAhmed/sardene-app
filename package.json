@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "query-string": "^6.6.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "yarn": "^1.16.0"
   },
@@ -15,7 +17,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "lint": "prettier src/**{js,css,json}** --write"
+    "lint": "prettier src/**/**{js,css,json}** --write"
   },
   "browserslist": {
     "production": [

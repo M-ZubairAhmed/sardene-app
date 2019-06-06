@@ -1,19 +1,13 @@
 import React from "react";
+import { Switch, Route } from "react-router-dom";
 
-import Nav from "./nav";
-import Search from "./search";
-import List from "./list";
+import Layout from "./components/layout";
+import Home from "./routes/home";
 
-export default () => (
-  <>
-    <header>
-      <Nav />
-    </header>
-    <section>
-      <Search />
-    </section>
-    <main>
-      <List />
-    </main>
-  </>
+export default props => (
+  <Switch>
+    <Layout>
+      <Route exact path="/" render={props => <Home />} />
+    </Layout>
+  </Switch>
 );

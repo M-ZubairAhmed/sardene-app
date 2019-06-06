@@ -28,18 +28,18 @@ const IdeaCards = ({ ideas }) => (
             <div className="row flex-edges margin-bottom-none">
               <div className="col padding-left-none padding-bottom-none">
                 <p className="margin-top-large text-muted">
-                  {idea.makers === 1
-                    ? `${idea.makers} person liked it.`
-                    : idea.makers === 0
+                  {parseInt(idea.gazers) === 1
+                    ? `${parseInt(idea.gazers)} person liked it.`
+                    : parseInt(idea.gazers) === 0
                     ? `People are yet to like it.`
-                    : `${idea.makers} people loved it.`}
+                    : `${parseInt(idea.gazers)} people loved it.`}
                 </p>
                 <p className="text-muted">
-                  {idea.makers === 1
-                    ? `${idea.makers} person made it.`
-                    : idea.makers === 0
+                  {parseInt(idea.makers) === 1
+                    ? `${parseInt(idea.makers)} person made it.`
+                    : parseInt(idea.makers) === 0
                     ? `No one made it yet.`
-                    : `${idea.makers} people made it.`}
+                    : `${parseInt(idea.makers)} people made it.`}
                 </p>
               </div>
               <div className="col padding-bottom-none">

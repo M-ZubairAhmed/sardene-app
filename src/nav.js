@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default props => {
   return (
@@ -17,7 +18,9 @@ export default props => {
         </button>
         <div className="collapsible-body">
           <ul className="inline">
-            <li popover-bottom="View source code">Source</li>
+            <Link to="/source">
+              <li popover-bottom="View source code">Source</li>
+            </Link>
             {props.auth ? (
               <li popover-bottom="Go to Profile">Hi, Zubair</li>
             ) : (
