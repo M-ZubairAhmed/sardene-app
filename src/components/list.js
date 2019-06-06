@@ -68,7 +68,7 @@ class List extends React.Component {
 
   async componentDidMount() {
     try {
-      const url = "http://localhost:8000/ideas";
+      const url = `${process.env.REACT_APP_BASE_URL}/ideas`;
       const request = await axios.get(url);
       const response = await request.data;
       console.log(response);
