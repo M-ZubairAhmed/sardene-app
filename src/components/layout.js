@@ -6,7 +6,7 @@ const getGihubLoginURL = () => {
   const baseURL = "https://github.com/login/oauth/authorize";
   let query = {};
   query.client_id = process.env.REACT_APP_GITHUB_CLIENT_ID;
-  query.redirect_uri = "http://localhost:3000/auth";
+  query.redirect_uri = process.env.REACT_APP_REDIRECT_URL;
   const queries = qs.stringify(query);
   return `${baseURL}?${queries}`;
 };
