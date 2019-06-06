@@ -5,6 +5,7 @@ import qs from "query-string";
 const getGihubLoginURL = () => {
   const baseURL = "https://github.com/login/oauth/authorize";
   let query = {};
+  console.log(process.env.REACT_APP_GITHUB_CLIENT_ID)
   query.client_id = "5ce4830289c6d01e4d0d";
   query.redirect_uri = "http://localhost:3000/auth";
   const queries = qs.stringify(query);
@@ -29,6 +30,7 @@ const NavigationBar = props => (
       </button>
       <div className="collapsible-body">
         <ul className="inline">
+          <p>{process.env.REACT_APP_GITHUB_CLIENT_ID}</p>
           <Link to="/privacy">
             <li popover-bottom="View Privacy statement">Privacy</li>
           </Link>
