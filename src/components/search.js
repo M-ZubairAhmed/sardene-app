@@ -12,7 +12,7 @@ export default class Search extends React.Component {
         <div className="row flex-center">
           <div className="col sm-6">
             <div className="form-group">
-              <label for="paperInputs3">Filter ideas</label>
+              <label htmlFor="paperInputs3">Filter ideas</label>
               <input
                 className="input-block"
                 type="text"

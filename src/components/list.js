@@ -1,29 +1,24 @@
 import React from "react";
 import axios from "axios";
 
+import Loader from "../components/loader";
+
 const ENUM_LOADING = "LOADING";
 const ENUM_COMPLETE = "COMPLETE";
-const ENUM_ERROR = "ERROR";
-
-const CircularLoader = () => (
-  <div className="text-center">
-    <div class="lds-facebook">
-      <div />
-      <div />
-    </div>
-    <h2 className="margin-top-none">loading ideas</h2>
-  </div>
-);
+// const ENUM_ERROR = "ERROR";
 
 const IdeaCards = ({ ideas }) => (
   <div className="row flex-center">
     {ideas.map(idea => (
-      <div className="sm-12 md-8 lg-8 col">
+      <div
+        className="sm-12 md-8 lg-8 col"
+        key={`${idea.name}-${idea.publisher}`}
+      >
         <div className="card margin-bottom-large">
           <div className="card-body">
-            <h4 class="card-title">{idea.name}</h4>
+            <h4 className="card-title">{idea.name}</h4>
             <p className="card-text">{idea.description}</p>
-            <h6 class="card-text">- {idea.publisher}</h6>
+            <h6 className="card-text">- {idea.publisher}</h6>
             <div className="margin" />
             <div className="row flex-edges margin-bottom-none">
               <div className="col padding-left-none padding-bottom-none">
@@ -71,7 +66,6 @@ class List extends React.Component {
       const url = `${process.env.REACT_APP_BASE_URL}/ideas`;
       const request = await axios.get(url);
       const response = await request.data;
-      console.log(response);
       if (response.status && response.status === 200) {
         this.setState({
           ideas: response.data.sort((a, b) => b.created_at - a.created_at),
@@ -89,7 +83,9 @@ class List extends React.Component {
 
     return (
       <>
-        {networkState === ENUM_LOADING && <CircularLoader />}
+        {networkState === ENUM_LOADING && (
+          <Loader loadingText="Loading ideas" />
+        )}
         {networkState === ENUM_COMPLETE && (
           <IdeaCards ideas={ideas} styles={styles} />
         )}

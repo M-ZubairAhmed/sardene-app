@@ -11,44 +11,42 @@ const getGihubLoginURL = () => {
   return `${baseURL}?${queries}`;
 };
 
-const NavigationBar = props => (
-  <nav className="border split-nav margin-large">
-    <div className="nav-brand">
-      <Link to="/">
-        <h4>Sardene</h4>
-      </Link>
-    </div>
-    <div className="collapsible">
-      <input id="collapsible1" type="checkbox" name="collapsible1" />
-      <button>
-        <label for="collapsible1">
-          {" "}
-          <div className="bar2" />
-          <div className="bar3" />
-        </label>
-      </button>
-      <div className="collapsible-body">
-        <ul className="inline">
-          <Link to="/privacy">
-            <li popover-bottom="View Privacy statement">Privacy</li>
-          </Link>
-          <Link to="/source">
-            <li popover-bottom="View source code">Source</li>
-          </Link>
-          {props.auth ? (
-            <Link to="/myideashnv  ">
-              <li popover-bottom="Go to Profile">Hi, Zubair</li>
-            </Link>
-          ) : (
-            <a href={getGihubLoginURL()} target="__blank">
-              <li popover-bottom="Login with Github">Login</li>
-            </a>
-          )}
-        </ul>
+const NavigationBar = () => {
+  const username = localStorage.getItem("username");
+  const isAuth = localStorage.getItem("accessToken") ? true : false;
+  return (
+    <nav className="border split-nav margin-large">
+      <div className="nav-brand">
+        <Link to="/">
+          <h4>Sardene</h4>
+        </Link>
       </div>
-    </div>
-  </nav>
-);
+      <div className="collapsible">
+        <input id="collapsible1" type="checkbox" name="collapsible1" />
+        <button>
+          <label htmlFor="collapsible1">
+            {" "}
+            <div className="bar2" />
+            <div className="bar3" />
+          </label>
+        </button>
+        <div className="collapsible-body">
+          <ul className="inline">
+            {isAuth ? (
+              <Link to="/myideas  ">
+                <li popover-bottom="Go to Profile">Hi, {username}</li>
+              </Link>
+            ) : (
+              <a href={getGihubLoginURL()} target="_self">
+                <li popover-bottom="Login with Github">Login</li>
+              </a>
+            )}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 export default class Layout extends React.Component {
   render() {
