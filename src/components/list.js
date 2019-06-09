@@ -1,11 +1,11 @@
 import React from "react";
-import axios from "axios";
 
 import Loader from "../components/loader";
 
 const ENUM_LOADING = "LOADING";
 const ENUM_COMPLETE = "COMPLETE";
-// const ENUM_ERROR = "ERROR";
+const ENUM_EMPTY = "EMPTY_IDEAS";
+const ENUM_ERROR = "ERROR";
 
 const IdeaCards = ({ ideas }) => (
   <div className="row flex-center">
@@ -49,52 +49,15 @@ const IdeaCards = ({ ideas }) => (
   </div>
 );
 
-const FloatingActionButton = () => (
-  <div className="fab">
-    <button className="paper-btn margin">+</button>
-  </div>
+export default ({ ideas, networkState }) => (
+  <>
+    {networkState === ENUM_LOADING && <Loader loadingText="Loading ideas" />}
+    {networkState === ENUM_COMPLETE && <IdeaCards ideas={ideas} />}
+    {networkState === ENUM_EMPTY && (
+      <h2 className="text-center">No ideas yet</h2>
+    )}
+    {networkState === ENUM_ERROR && (
+      <h2 className="text-center">Failed to load ideas!!</h2>
+    )}
+  </>
 );
-
-class List extends React.Component {
-  state = {
-    networkState: ENUM_LOADING,
-    ideas: []
-  };
-
-  async componentDidMount() {
-    try {
-      const url = `${process.env.REACT_APP_BASE_URL}/ideas`;
-      const request = await axios.get(url);
-      const response = await request.data;
-      if (response.status && response.status === 200) {
-        this.setState({
-          ideas: response.data.sort((a, b) => b.created_at - a.created_at),
-          networkState: ENUM_COMPLETE
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  render() {
-    const { classes: styles } = this.props;
-    const { ideas, networkState } = this.state;
-
-    return (
-      <>
-        {networkState === ENUM_LOADING && (
-          <Loader loadingText="Loading ideas" />
-        )}
-        {networkState === ENUM_COMPLETE && (
-          <IdeaCards ideas={ideas} styles={styles} />
-        )}
-        <aside>
-          <FloatingActionButton styles={styles} />
-        </aside>
-      </>
-    );
-  }
-}
-
-export default List;

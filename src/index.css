@@ -73,3 +73,8 @@ body {
     height: 26px;
   }
 }
+
+.showModal {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
