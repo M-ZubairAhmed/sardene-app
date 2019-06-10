@@ -43,7 +43,10 @@ export default class App extends React.Component {
             path="/"
             render={props => (
               <Layout>
-                <Home showNotification={this.showNotification} />
+                <Home
+                  showNotification={this.showNotification}
+                  textOfNotification={this.state.textOfNotification}
+                />
               </Layout>
             )}
           />

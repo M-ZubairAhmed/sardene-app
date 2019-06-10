@@ -3,11 +3,7 @@ import React from "react";
 export default class AddNewIdea extends React.Component {
   state = {
     title: "",
-    description: "",
-    error: {
-      text: "",
-      state: false
-    }
+    description: ""
   };
 
   onChange(event) {
@@ -18,8 +14,8 @@ export default class AddNewIdea extends React.Component {
       this.setState({
         [name]: value
       });
-      if (this.state.error.state) {
-        this.toggleError("", false);
+      if (this.props.textOfNotification !== "") {
+        this.props.showNotification("", "");
       }
     }
   }
@@ -29,25 +25,16 @@ export default class AddNewIdea extends React.Component {
     this.props.toggleAddNewModal();
   }
 
-  toggleError(text, state) {
-    this.setState({
-      error: {
-        text,
-        state
-      }
-    });
-  }
-
   submitIdea = e => {
     e.preventDefault();
     if (this.state.title.trim() === "") {
-      this.toggleError("Please enter idea name", true);
+      this.props.showNotification("Please enter idea name", "danger");
     } else if (this.state.description.trim() === "") {
-      this.toggleError("Please enter idea description", true);
+      this.props.showNotification("Please enter idea description", "danger");
     } else if (localStorage.getItem("accessToken") === null) {
-      this.toggleError(
+      this.props.showNotification(
         "You are not logged in, please sign in to add idea",
-        true
+        "danger"
       );
     } else {
       this.props.submitIdeaToServer({
@@ -110,22 +97,6 @@ export default class AddNewIdea extends React.Component {
               </button>
             </div>
           </form>
-        </div>
-        <div className="row flex-spaces">
-          {this.state.error.state && (
-            <>
-              <div className="alert alert-danger dismissible">
-                {this.state.error.text}
-                <label
-                  className="btn-close"
-                  htmlFor="errorMessageInModal"
-                  onClick={() => this.toggleError("", false)}
-                >
-                  X
-                </label>
-              </div>
-            </>
-          )}
         </div>
       </div>
     );

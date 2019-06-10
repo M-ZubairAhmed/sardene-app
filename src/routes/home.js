@@ -126,6 +126,8 @@ export default class Home extends React.Component {
           showModal={this.state.isAddNewModalOpen}
           toggleAddNewModal={this.toggleAddNewModal}
           submitIdeaToServer={this.submitIdeaToServerClicked}
+          showNotification={this.props.showNotification}
+          textOfNotification={this.props.textOfNotification}
         />
       </>
     );
