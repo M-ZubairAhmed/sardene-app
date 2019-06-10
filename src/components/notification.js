@@ -13,7 +13,7 @@ export default class Notification extends React.Component {
 
     if (showNotification) {
       return (
-        <div className="row flex-spaces">
+        <div className="row flex-spaces sticky-notification">
           <div className={`alert alert-${this.props.state} dismissible`}>
             {this.props.text}
             <label className="btn-close" onClick={() => this.props.close()}>

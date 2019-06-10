@@ -10,6 +10,14 @@ const ENUM_COMPLETE = "COMPLETE";
 const ENUM_EMPTY = "EMPTY_IDEAS";
 const ENUM_ERROR = "ERROR";
 
+const Hero = () => (
+  <div className="row flex-center margin-bottom-large text-center">
+    <h2 className="margin margin-bottom-none ">
+      Find your next idea to hack on this weekend
+    </h2>
+  </div>
+);
+
 export default class Home extends React.Component {
   state = {
     isAddNewModalOpen: false,
@@ -100,9 +108,11 @@ export default class Home extends React.Component {
   render() {
     return (
       <>
-        <aside>
+        <Hero />
+        {/* TODO: later search will be implemented */}
+        {/* <aside>
           <Search />
-        </aside>
+        </aside> */}
         <section>
           <IdeaList
             ideas={this.state.ideas}

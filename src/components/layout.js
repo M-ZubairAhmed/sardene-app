@@ -38,7 +38,7 @@ const NavigationBar = () => {
               </Link>
             ) : (
               <a href={getGihubLoginURL()} target="_self">
-                <li popover-bottom="Login with Github">Login</li>
+                <li>Login with Github</li>
               </a>
             )}
           </ul>

@@ -18,7 +18,15 @@ const IdeaCards = ({ ideas }) => (
           <div className="card-body">
             <h4 className="card-title">{idea.name}</h4>
             <p className="card-text">{idea.description}</p>
-            <h6 className="card-text">- {idea.publisher}</h6>
+            <h6 className="card-text">
+              <a
+                href={`https://github.com/${idea.publisher}`}
+                target="_blank"
+                rel="noopener"
+              >
+                @{idea.publisher}
+              </a>
+            </h6>
             <div className="margin" />
             <div className="row flex-edges margin-bottom-none">
               <div className="col padding-left-none padding-bottom-none">
