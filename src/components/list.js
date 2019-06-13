@@ -7,13 +7,10 @@ const ENUM_COMPLETE = "COMPLETE";
 const ENUM_EMPTY = "EMPTY_IDEAS";
 const ENUM_ERROR = "ERROR";
 
-const IdeaCards = ({ ideas }) => (
+const IdeaCards = ({ ideas, likeClicked, makeClicked }) => (
   <div className="row flex-center">
     {ideas.map(idea => (
-      <div
-        className="sm-12 md-8 lg-8 col"
-        key={`${idea.name}-${idea.publisher}`}
-      >
+      <div className="sm-12 md-8 lg-8 col" key={`${idea.id}`}>
         <div className="card margin-bottom-large">
           <div className="card-body">
             <h4 className="card-title">{idea.name}</h4>
@@ -22,7 +19,7 @@ const IdeaCards = ({ ideas }) => (
               <a
                 href={`https://github.com/${idea.publisher}`}
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >
                 @{idea.publisher}
               </a>
@@ -46,8 +43,13 @@ const IdeaCards = ({ ideas }) => (
                 </p>
               </div>
               <div className="col padding-bottom-none">
-                <button className="margin-right-large">Like it</button>
-                <button>I made it</button>
+                <button
+                  className="margin-right-large"
+                  onClick={() => likeClicked(idea.id)}
+                >
+                  Like it
+                </button>
+                <button onClick={() => makeClicked(idea.id)}> I made it</button>
               </div>
             </div>
           </div>
@@ -57,10 +59,16 @@ const IdeaCards = ({ ideas }) => (
   </div>
 );
 
-export default ({ ideas, networkState }) => (
+export default ({ ideas, networkState, likeClicked, makeClicked }) => (
   <>
     {networkState === ENUM_LOADING && <Loader loadingText="Loading ideas" />}
-    {networkState === ENUM_COMPLETE && <IdeaCards ideas={ideas} />}
+    {networkState === ENUM_COMPLETE && (
+      <IdeaCards
+        ideas={ideas}
+        likeClicked={likeClicked}
+        makeClicked={makeClicked}
+      />
+    )}
     {networkState === ENUM_EMPTY && (
       <h2 className="text-center">No ideas yet</h2>
     )}

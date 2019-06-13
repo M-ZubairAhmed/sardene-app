@@ -1,6 +1,6 @@
 import React from "react";
 
-import Search from "../components/search";
+// import Search from "../components/search";
 import IdeaList from "../components/list";
 import AddIdea from "../components/add-idea";
 import Fab from "../components/fab";
@@ -92,6 +92,53 @@ export default class Home extends React.Component {
     }
   }
 
+  likeClicked = async ideaID => {
+    const { ideas } = this.state;
+    const clikedIdea = ideas.find(idea => idea.id === ideaID);
+    const clikedIdeaIndex = ideas.findIndex(idea => idea.id === ideaID);
+    const likedIdea = { ...clikedIdea, gazers: Number(clikedIdea.gazers) + 1 };
+    const updatedIdeas = [
+      ...ideas.slice(0, clikedIdeaIndex),
+      likedIdea,
+      ...ideas.slice(clikedIdeaIndex + 1)
+    ];
+
+    const accessToken = `${localStorage.getItem("accessToken")}`;
+    const url = `${process.env.REACT_APP_BASE_URL}/idea/gaze/${ideaID}`;
+
+    try {
+      const request = await fetch(url, {
+        method: "PATCH",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: new Headers({
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        })
+      });
+      const response = await request.json()
+      console.log(response)
+    } catch (err) {}
+
+    await this.setState({ ideas: updatedIdeas });
+  };
+
+  makeClicked = async ideaID => {
+    const { ideas } = this.state;
+    const clikedIdea = ideas.find(idea => idea.id === ideaID);
+    const clikedIdeaIndex = ideas.findIndex(idea => idea.id === ideaID);
+    const madeIdea = { ...clikedIdea, makers: Number(clikedIdea.makers) + 1 };
+    const updatedIdeas = [
+      ...ideas.slice(0, clikedIdeaIndex),
+      madeIdea,
+      ...ideas.slice(clikedIdeaIndex + 1)
+    ];
+
+    await this.setState({ ideas: updatedIdeas });
+  };
+
   submitIdeaToServerClicked = idea => {
     this.toggleAddNewModal();
     this.props.showNotification(
@@ -117,6 +164,8 @@ export default class Home extends React.Component {
           <IdeaList
             ideas={this.state.ideas}
             networkState={this.state.networkState}
+            likeClicked={this.likeClicked}
+            makeClicked={this.makeClicked}
           />
         </section>
         <aside>

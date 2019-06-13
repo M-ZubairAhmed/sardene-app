@@ -3,7 +3,6 @@ import { Redirect } from "react-router-dom";
 import qs from "query-string";
 
 import Loader from "../components/loader";
-import axios from "axios";
 
 const NO_CODE = "NO_GITHUB_CODE";
 const AUTH_OK = "GITHUB_AUTHENTICATED";
@@ -25,17 +24,15 @@ export default class Auth extends React.Component {
   async sendCodeToServer(code) {
     try {
       const url = `${process.env.REACT_APP_BASE_URL}/auth`;
-      const request = await axios.post(
-        url,
-        {
-          code
-        },
-        {
-          timeout: 600000
-        }
-      );
+      const data = { code };
 
-      const response = await request.data;
+      const request = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data)
+      });
+
+      const response = await request.json();
+
       if (response && response.status === 200 && response.data) {
         const { access_token, id, login, name, token_type } = response.data;
         if (access_token) {
@@ -58,6 +55,7 @@ export default class Auth extends React.Component {
         return response;
       }
     } catch (err) {
+      console.error(err);
       return err;
     }
   }
