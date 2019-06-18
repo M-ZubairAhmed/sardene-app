@@ -33,7 +33,7 @@ const NavigationBar = () => {
         <div className="collapsible-body">
           <ul className="inline">
             {isAuth ? (
-              <Link to="/myideas  ">
+              <Link to="/myideas">
                 <li popover-bottom="Go to Profile">Hi, {username}</li>
               </Link>
             ) : (

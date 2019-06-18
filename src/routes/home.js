@@ -22,11 +22,36 @@ export default class Home extends React.Component {
   state = {
     isAddNewModalOpen: false,
     networkState: ENUM_LOADING,
-    ideas: []
+    ideas: [],
+    userLikedIdeas: []
   };
 
   toggleAddNewModal = () =>
     this.setState({ isAddNewModalOpen: !this.state.isAddNewModalOpen });
+
+  async getLikedIdeas() {
+    try {
+      const accessToken = `${localStorage.getItem("accessToken")}`;
+      const GAZED_IDEAS_URL = `${process.env.REACT_APP_BASE_URL}/ideas/gazed`;
+      const requestGazedIdeas = await fetch(GAZED_IDEAS_URL, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+        headers: new Headers({
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        })
+      });
+      const gazedIdeas = await requestGazedIdeas.json();
+      if (gazedIdeas.status === 200) {
+        this.setState({
+          userLikedIdeas: gazedIdeas.data
+        });
+      }
+    } catch (err) {}
+  }
 
   async getIdeas() {
     await this.setState({
@@ -34,21 +59,26 @@ export default class Home extends React.Component {
       ideas: []
     });
     try {
-      const url = `${process.env.REACT_APP_BASE_URL}/ideas`;
-      const request = await fetch(url);
-      const response = await request.json();
-      if (response.status && response.status === 200) {
-        if (response.count === 0) {
+      const ALL_IDEAS_URL = `${process.env.REACT_APP_BASE_URL}/ideas`;
+      const requestAllIdeas = await fetch(ALL_IDEAS_URL);
+
+      const allIdeas = await requestAllIdeas.json();
+
+      if (allIdeas.status && allIdeas.status === 200) {
+        if (allIdeas.count === 0) {
           await this.setState({
             ideas: [],
             networkState: ENUM_EMPTY
           });
         } else {
+          this.getLikedIdeas();
           await this.setState({
-            ideas: response.data.sort((a, b) => b.created_at - a.created_at),
+            ideas: allIdeas.data.sort((a, b) => b.created_at - a.created_at),
             networkState: ENUM_COMPLETE
           });
         }
+      } else {
+        throw "ERROR";
       }
     } catch (err) {
       console.error(err);
@@ -93,20 +123,31 @@ export default class Home extends React.Component {
   }
 
   likeClicked = async ideaID => {
-    const { ideas } = this.state;
-    const clikedIdea = ideas.find(idea => idea.id === ideaID);
-    const clikedIdeaIndex = ideas.findIndex(idea => idea.id === ideaID);
-    const likedIdea = { ...clikedIdea, gazers: Number(clikedIdea.gazers) + 1 };
-    const updatedIdeas = [
-      ...ideas.slice(0, clikedIdeaIndex),
-      likedIdea,
-      ...ideas.slice(clikedIdeaIndex + 1)
-    ];
-
+    const { ideas, ideas: ideasBeforeLiking } = this.state;
     const accessToken = `${localStorage.getItem("accessToken")}`;
-    const url = `${process.env.REACT_APP_BASE_URL}/idea/gaze/${ideaID}`;
+
+    if (localStorage.getItem("accessToken") === null) {
+      this.props.showNotification("Please sign in to like the idea", "warning");
+      return;
+    }
 
     try {
+      const clikedIdea = ideas.find(idea => idea.id === ideaID);
+      const clikedIdeaIndex = ideas.findIndex(idea => idea.id === ideaID);
+      const likedIdea = {
+        ...clikedIdea,
+        gazers: Number(clikedIdea.gazers) + 1
+      };
+      const updatedIdeas = [
+        ...ideas.slice(0, clikedIdeaIndex),
+        likedIdea,
+        ...ideas.slice(clikedIdeaIndex + 1)
+      ];
+
+      await this.setState({ ideas: updatedIdeas });
+
+      const url = `${process.env.REACT_APP_BASE_URL}/idea/gaze/${ideaID}`;
+
       const request = await fetch(url, {
         method: "PATCH",
         mode: "cors",
@@ -118,25 +159,18 @@ export default class Home extends React.Component {
           Accept: "application/json"
         })
       });
-      const response = await request.json()
-      console.log(response)
-    } catch (err) {}
+      const response = await request.json();
 
-    await this.setState({ ideas: updatedIdeas });
-  };
-
-  makeClicked = async ideaID => {
-    const { ideas } = this.state;
-    const clikedIdea = ideas.find(idea => idea.id === ideaID);
-    const clikedIdeaIndex = ideas.findIndex(idea => idea.id === ideaID);
-    const madeIdea = { ...clikedIdea, makers: Number(clikedIdea.makers) + 1 };
-    const updatedIdeas = [
-      ...ideas.slice(0, clikedIdeaIndex),
-      madeIdea,
-      ...ideas.slice(clikedIdeaIndex + 1)
-    ];
-
-    await this.setState({ ideas: updatedIdeas });
+      if (response.status === 200) {
+        this.getLikedIdeas();
+      } else {
+        throw "Error";
+      }
+    } catch (err) {
+      console.error(err);
+      this.props.showNotification("Error while liking the idea", "warning");
+      this.setState({ ideas: ideasBeforeLiking });
+    }
   };
 
   submitIdeaToServerClicked = idea => {
@@ -165,7 +199,7 @@ export default class Home extends React.Component {
             ideas={this.state.ideas}
             networkState={this.state.networkState}
             likeClicked={this.likeClicked}
-            makeClicked={this.makeClicked}
+            userLikedIdeas={this.state.userLikedIdeas}
           />
         </section>
         <aside>

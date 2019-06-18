@@ -22,6 +22,12 @@ export default class AddNewIdea extends React.Component {
 
   closeModal(e) {
     e.preventDefault();
+    if (this.state.title !== "" || this.state.description !== "") {
+      this.props.showNotification(
+        "Your idea is stored temporarily, you can access it by cliking add new button again, if you like to resume writing.",
+        "secondary"
+      );
+    }
     this.props.toggleAddNewModal();
   }
 

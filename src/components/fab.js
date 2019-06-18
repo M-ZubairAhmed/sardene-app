@@ -7,7 +7,7 @@ export default ({ openAddNewModal }) => (
       popover-top="Submit a new idea"
       onClick={() => openAddNewModal()}
     >
-      +
+      &#43;
     </button>
   </div>
 );

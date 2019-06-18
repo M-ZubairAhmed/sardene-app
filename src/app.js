@@ -5,6 +5,7 @@ import Layout from "./components/layout";
 import Notification from "./components/notification";
 import Home from "./routes/home";
 import Auth from "./routes/auth";
+import Profile from "./routes/profile";
 
 export default class App extends React.Component {
   state = {
@@ -51,6 +52,14 @@ export default class App extends React.Component {
             )}
           />
           <Route path="/auth" render={props => <Auth {...props} />} />
+          <Route
+            path="/myideas"
+            render={props => (
+              <Layout {...props}>
+                <Profile />
+              </Layout>
+            )}
+          />
         </Switch>
       </>
     );

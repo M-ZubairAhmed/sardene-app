@@ -7,59 +7,112 @@ const ENUM_COMPLETE = "COMPLETE";
 const ENUM_EMPTY = "EMPTY_IDEAS";
 const ENUM_ERROR = "ERROR";
 
-const IdeaCards = ({ ideas, likeClicked, makeClicked }) => (
-  <div className="row flex-center">
-    {ideas.map(idea => (
-      <div className="sm-12 md-8 lg-8 col" key={`${idea.id}`}>
-        <div className="card margin-bottom-large">
-          <div className="card-body">
-            <h4 className="card-title">{idea.name}</h4>
-            <p className="card-text">{idea.description}</p>
-            <h6 className="card-text">
-              <a
-                href={`https://github.com/${idea.publisher}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                @{idea.publisher}
-              </a>
-            </h6>
-            <div className="margin" />
-            <div className="row flex-edges margin-bottom-none">
-              <div className="col padding-left-none padding-bottom-none">
-                <p className="margin-top-large text-muted">
-                  {parseInt(idea.gazers) === 1
-                    ? `${parseInt(idea.gazers)} person liked it.`
-                    : parseInt(idea.gazers) === 0
-                    ? `People are yet to like it.`
-                    : `${parseInt(idea.gazers)} people loved it.`}
-                </p>
-                <p className="text-muted">
-                  {parseInt(idea.makers) === 1
-                    ? `${parseInt(idea.makers)} person made it.`
-                    : parseInt(idea.makers) === 0
-                    ? `No one made it yet.`
-                    : `${parseInt(idea.makers)} people made it.`}
-                </p>
-              </div>
-              <div className="col padding-bottom-none">
-                <button
-                  className="margin-right-large"
-                  onClick={() => likeClicked(idea.id)}
-                >
-                  Like it
-                </button>
-                <button onClick={() => makeClicked(idea.id)}> I made it</button>
+const getPersonalizedLikingText = (didUserLikedThisIdea = false, likeCount) => {
+  const adjective = "like";
+  const comparative = "liked";
+  const superlative = "loved";
+
+  if (likeCount === NaN) {
+    return "";
+  } else {
+    if (didUserLikedThisIdea) {
+      if (likeCount === 1) {
+        return `You ${comparative} it`;
+      } else {
+        const othersCount = likeCount - 1;
+        if (othersCount === 1) {
+          return `You and another person ${comparative} it`;
+        } else {
+          return `You and ${othersCount} others ${superlative} it`;
+        }
+      }
+    } else {
+      if (likeCount === 1) {
+        return `1 person ${adjective} it`;
+      } else if (likeCount > 1) {
+        return `${likeCount} people ${superlative} it`;
+      } else {
+        return `People are yet to ${adjective} it`;
+      }
+    }
+  }
+};
+
+const IdeaCards = ({ ideas, likeClicked, userLikedIdeas }) => {
+  return (
+    <div className="row flex-center">
+      {ideas.map(idea => {
+        const didUserLikedThisIdea =
+          userLikedIdeas.filter(
+            userLikedIdea => userLikedIdea.ideaID === idea.id
+          ).length !== 0;
+        const personalizedLikingText = getPersonalizedLikingText(
+          didUserLikedThisIdea,
+          parseInt(idea.gazers, 10),
+          "like"
+        );
+        const disableLiking =
+          userLikedIdeas.length === 0 || didUserLikedThisIdea;
+
+        return (
+          <div className="sm-12 md-8 lg-8 col" key={`${idea.id}`}>
+            <div className="card margin-bottom-large">
+              <div className="card-body">
+                <h4 className="card-title">{idea.name}</h4>
+                <p className="card-text">{idea.description}</p>
+                <h6 className="card-text">
+                  <a
+                    href={`https://github.com/${idea.publisher}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary"
+                    style={{ backgroundImage: "none" }}
+                  >
+                    &#64;{idea.publisher}
+                  </a>
+                </h6>
+                <div className="margin" />
+                <div className="row flex-edges margin-bottom-none flex-bottom">
+                  <div className="col padding-left-none padding-bottom-none">
+                    <p className="margin-top-large text-muted">
+                      {personalizedLikingText}
+                    </p>
+                  </div>
+                  <div className="col padding-right-none padding-bottom-none">
+                    <button
+                      className={`text-primary ${
+                        disableLiking ? `paper-btn btn-primary` : ""
+                      }`}
+                      onClick={() => likeClicked(idea.id)}
+                      disabled={disableLiking}
+                      popover-top={
+                        disableLiking
+                          ? didUserLikedThisIdea
+                            ? "You already liked this idea"
+                            : "Please sign in to like the idea"
+                          : "Like this idea"
+                      }
+                    >
+                      {didUserLikedThisIdea ? "♥ Liked" : "♡ Like it"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    ))}
-  </div>
-);
+        );
+      })}
+    </div>
+  );
+};
 
-export default ({ ideas, networkState, likeClicked, makeClicked }) => (
+export default ({
+  ideas,
+  networkState,
+  likeClicked,
+  makeClicked,
+  userLikedIdeas
+}) => (
   <>
     {networkState === ENUM_LOADING && <Loader loadingText="Loading ideas" />}
     {networkState === ENUM_COMPLETE && (
@@ -67,6 +120,7 @@ export default ({ ideas, networkState, likeClicked, makeClicked }) => (
         ideas={ideas}
         likeClicked={likeClicked}
         makeClicked={makeClicked}
+        userLikedIdeas={userLikedIdeas}
       />
     )}
     {networkState === ENUM_EMPTY && (

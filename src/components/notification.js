@@ -5,6 +5,7 @@ export default class Notification extends React.Component {
     const { state } = this.props;
     const showNotification =
       state === "primary" ||
+      state === "secondary" ||
       state === "success" ||
       state === "warning" ||
       state === "danger"
