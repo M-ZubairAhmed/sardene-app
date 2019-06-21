@@ -7,12 +7,22 @@ const ENUM_COMPLETE = "COMPLETE";
 const ENUM_EMPTY = "EMPTY_IDEAS";
 const ENUM_ERROR = "ERROR";
 
+const shouldDisableLiking = (isUserLoggedIn, didUserLikedThisIdea) => {
+  if (isUserLoggedIn) {
+    if (didUserLikedThisIdea) {
+      return true;
+    }
+    return false;
+  }
+  return true;
+};
+
 const getPersonalizedLikingText = (didUserLikedThisIdea = false, likeCount) => {
   const adjective = "like";
   const comparative = "liked";
   const superlative = "loved";
 
-  if (likeCount === NaN) {
+  if (isNaN(likeCount)) {
     return "";
   } else {
     if (didUserLikedThisIdea) {
@@ -38,7 +48,12 @@ const getPersonalizedLikingText = (didUserLikedThisIdea = false, likeCount) => {
   }
 };
 
-const IdeaCards = ({ ideas, likeClicked, userLikedIdeas }) => {
+const IdeaCards = ({
+  ideas = [],
+  likeClicked,
+  userLikedIdeas = [],
+  isUserLoggedIn = false
+}) => {
   return (
     <div className="row flex-center">
       {ideas.map(idea => {
@@ -51,8 +66,10 @@ const IdeaCards = ({ ideas, likeClicked, userLikedIdeas }) => {
           parseInt(idea.gazers, 10),
           "like"
         );
-        const disableLiking =
-          userLikedIdeas.length === 0 || didUserLikedThisIdea;
+        const disableLikingForSomeReason = shouldDisableLiking(
+          isUserLoggedIn,
+          didUserLikedThisIdea
+        );
 
         return (
           <div className="sm-12 md-8 lg-8 col" key={`${idea.id}`}>
@@ -81,16 +98,18 @@ const IdeaCards = ({ ideas, likeClicked, userLikedIdeas }) => {
                   <div className="col padding-right-none padding-bottom-none">
                     <button
                       className={`text-primary ${
-                        disableLiking ? `paper-btn btn-primary` : ""
+                        disableLikingForSomeReason
+                          ? `paper-btn btn-primary`
+                          : ""
                       }`}
                       onClick={() => likeClicked(idea.id)}
-                      disabled={disableLiking}
+                      disabled={disableLikingForSomeReason}
                       popover-top={
-                        disableLiking
+                        isUserLoggedIn
                           ? didUserLikedThisIdea
                             ? "You already liked this idea"
-                            : "Please sign in to like the idea"
-                          : "Like this idea"
+                            : "Like this idea"
+                          : "Please sign in to like the idea"
                       }
                     >
                       {didUserLikedThisIdea ? "♥ Liked" : "♡ Like it"}
@@ -111,7 +130,8 @@ export default ({
   networkState,
   likeClicked,
   makeClicked,
-  userLikedIdeas
+  userLikedIdeas,
+  isUserLoggedIn
 }) => (
   <>
     {networkState === ENUM_LOADING && <Loader loadingText="Loading ideas" />}
@@ -121,6 +141,7 @@ export default ({
         likeClicked={likeClicked}
         makeClicked={makeClicked}
         userLikedIdeas={userLikedIdeas}
+        isUserLoggedIn={isUserLoggedIn}
       />
     )}
     {networkState === ENUM_EMPTY && (

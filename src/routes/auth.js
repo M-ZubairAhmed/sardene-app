@@ -72,6 +72,7 @@ export default class Auth extends React.Component {
       const errorInRetrievingAccess = await this.sendCodeToServer(
         githubAuthCode
       );
+
       if (errorInRetrievingAccess === null) {
         await this.setState({
           redirectStatus: AUTH_OK
@@ -104,8 +105,8 @@ export default class Auth extends React.Component {
           </div>
         </section>
         {(this.state.redirectStatus === NO_CODE ||
-          this.state.redirectStatus === AUTH_OK) && <Redirect to="/" exact />}
-        {this.state.redirectStatus === ERROR && <Redirect to="/error" exact />}
+          this.state.redirectStatus === AUTH_OK) && <Redirect to="/" />}
+        {this.state.redirectStatus === ERROR && <Redirect to="/error" />}
       </div>
     );
   }

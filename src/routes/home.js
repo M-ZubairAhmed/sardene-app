@@ -47,7 +47,7 @@ export default class Home extends React.Component {
       const gazedIdeas = await requestGazedIdeas.json();
       if (gazedIdeas.status === 200) {
         this.setState({
-          userLikedIdeas: gazedIdeas.data
+          userLikedIdeas: gazedIdeas.data ? gazedIdeas.data : []
         });
       }
     } catch (err) {}
@@ -78,7 +78,8 @@ export default class Home extends React.Component {
           });
         }
       } else {
-        throw "ERROR";
+        // eslint-disable-next-line
+        throw new String("todo, error not handled");
       }
     } catch (err) {
       console.error(err);
@@ -164,7 +165,8 @@ export default class Home extends React.Component {
       if (response.status === 200) {
         this.getLikedIdeas();
       } else {
-        throw "Error";
+        // eslint-disable-next-line
+        throw new String("todo, error not handled");
       }
     } catch (err) {
       console.error(err);
@@ -200,6 +202,9 @@ export default class Home extends React.Component {
             networkState={this.state.networkState}
             likeClicked={this.likeClicked}
             userLikedIdeas={this.state.userLikedIdeas}
+            isUserLoggedIn={
+              localStorage.getItem("accessToken") === null ? false : true
+            }
           />
         </section>
         <aside>
